@@ -3,7 +3,13 @@
 </h1>
 
 <p align="center">
-    API for the WSIZ Virtual University <a href="wu-beta.wsiz.pl/">website</a>.
+  API for the WSIZ Virtual University <a href="wu-beta.wsiz.pl/">website</a>.
+</p>
+
+<p align="center">
+  <a style="text-decoration:none" href="https://www.codefactor.io/repository/github/teraskull/wsiz-api">
+    <img src="https://www.codefactor.io/repository/github/teraskull/wsiz-api/badge?style=flat-square" alt="CodeFactor" />
+  </a>
 </p>
 
 ## Requirements:
@@ -44,3 +50,4 @@ Open your browser at http://127.0.0.1:8000/docs.
 This software is available under the following licenses:
 
   * **MIT**
+  
