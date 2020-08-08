@@ -20,6 +20,10 @@
     ```console
     $ pip install fastapi
     ```
+* [BeautifulSoup](https://pypi.org/project/beautifulsoup4/) library
+    ```console
+    $ pip install beautifulsoup4
+    ```
 * [Uvicorn](http://www.uvicorn.org/) ASGI server
     ```console
     $ pip install uvicorn
