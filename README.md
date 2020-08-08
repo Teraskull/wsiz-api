@@ -1,9 +1,12 @@
+<p align="center">
+  <a href="https://wsiz.rzeszow.pl/"><img src="wsiz_logo.png" width="10%"></a>
+</p>
 <h1 align="center">
   WSIZ API
 </h1>
 
 <p align="center">
-  API for the WSIZ Virtual University <a href="wu-beta.wsiz.pl/">website</a>.
+  API for the WSIZ Virtual University <a href="https://wu-beta.wsiz.pl/">website</a>.
 </p>
 
 <p align="center">
@@ -33,20 +36,21 @@
 
 ```console
 $ git clone https://github.com/Teraskull/wsiz-api
-```
-```console
+
 $ cd wsiz-api
-```
-```console
+
 $ pip install -r requirements.txt
-```
-```console
+
+$ cd api
+
 $ uvicorn main:app --reload
 ```
 
-## Example:
+## Documentation:
 
 Open your browser at http://127.0.0.1:8000/docs.
+
+You will see the automatic interactive API documentation (provided by [Swagger UI](https://github.com/swagger-api/swagger-ui)).
 
 
 ## License:
