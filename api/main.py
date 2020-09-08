@@ -1,5 +1,5 @@
+from fastapi import FastAPI, HTTPException, Query
 from fastapi.responses import RedirectResponse
-from fastapi import FastAPI, HTTPException
 from typing import Optional, Union
 from wsiz import Scraper
 
@@ -22,12 +22,12 @@ def read_root():
 
 
 @app.get("/grades")
-def read_grades(login: str, password: str, semester: Optional[str] = '0', lang: Optional[str] = default_lang):
+def read_grades(login: str, password: str, semester: Optional[str] = Query('0', deprecated=True), lang: Optional[str] = default_lang):
     """
     Get student grades:
      - **login**: WSIZ student ID (required)
      - **password**: WSIZ student account password (required)
-     - **semester**: University semester (optional)
+     - **semester**: University semester (optional) [DEPRECATED: Grades from previous semesters are currently not available on the Virtual University.]
      - **lang**: Language [en, pl] (optional)
     """
     scraper = Scraper(login, password, semester, lang)

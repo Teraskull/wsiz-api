@@ -22,6 +22,7 @@ class Scraper():
                     self.semester = '0'
             except ValueError:  # If not a digit, set to latest semester
                 self.semester = '0'
+            self.grade_route = f"Grades/GetData?semester={self.semester}"
 
     def start_session(self) -> object:
         s = requests.Session()
@@ -47,11 +48,13 @@ class Scraper():
         return s
 
     def get_grades(self, s: object) -> dict:
-        if self.semester != 0:
-            self.grade_route = f"Grades/GetData?semester={self.semester}"
         get_grade_page = s.get(self.url + self.grade_route)
         grade_page = BeautifulSoup(get_grade_page.text, 'html.parser')
-        semester_num = grade_page.find('span', class_="dxeBase_Office365wsiz").text[-1]
+        try:
+            semester_num = grade_page.find('span', class_="dxeBase_Office365wsiz").text[-1]
+            int(semester_num)
+        except ValueError:
+            semester_num = ''
 
         header_items = []
         for table_header in grade_page.find_all('table', class_="dxgvHCEC"):
