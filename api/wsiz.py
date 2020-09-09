@@ -19,8 +19,14 @@ class Scraper():
         self.study_route = 'CurrentStudy/'
         if self.lang is not None and self.lang.lower() == 'pl':
             self.lang = 'pl-PL'
+            self.word_semester = 'Semestr'
+            self.word_grades = 'Oceny'
+            self.word_charges = 'Opłaty'
         else:
             self.lang = 'en-US'
+            self.word_semester = 'Semester'
+            self.word_grades = 'Grades'
+            self.word_charges = 'Charges'
         if self.semester is not None:
             try:
                 if not int(self.semester).bit_length() < 32:  # If Integer Overflow on website, set to latest semester
@@ -64,8 +70,8 @@ class Scraper():
                 header_items.append(item.text)
 
         grades = {
-            "Semester": semester_num,
-            "Grades": []
+            self.word_semester: semester_num,
+            self.word_grades: []
         }
         for table_row in grade_page.find_all('tr', class_="dxgvDataRow_Office365wsiz"):
             subject = table_row.find_all('td', class_="dx-ellipsis")
@@ -73,7 +79,7 @@ class Scraper():
             for idx, item in enumerate(subject):
                 if item.text != '-':  # Skip empty cells
                     grade[header_items[idx]] = item.text.strip()
-            grades["Grades"].append(grade)
+            grades[self.word_grades].append(grade)
         return grades
 
     def get_data(self, s: object) -> dict:
@@ -105,7 +111,7 @@ class Scraper():
                 header_items.append(item.text.strip())
 
         fees = {
-            "Charges": []
+            self.word_charges: []
         }
         for table_row in fees_page.find_all('tr', class_="dxgvDataRow_Office365wsiz"):
             charge = table_row.find_all('td', class_="dx-ellipsis")
@@ -113,7 +119,7 @@ class Scraper():
             for idx, item in enumerate(charge):
                 if idx != 4:  # Skip row with comments
                     fee[header_items[idx]] = item.text.strip()
-            fees["Charges"].append(fee)
+            fees[self.word_charges].append(fee)
         return fees
 
     def get_study(self, s: object) -> dict:
