@@ -43,7 +43,7 @@ def read_data(login: str, password: str, lang: Optional[str] = None):
      - **password**: WSIZ student account password (required)
      - **lang**: Language [pl] (optional)
     """
-    scraper = Scraper(login, password, lang)
+    scraper = Scraper(login, password, lang=lang)
     s = scraper.start_session()
     validate_user(s)
     return scraper.get_data(s)
@@ -57,7 +57,21 @@ def read_fees(login: str, password: str, lang: Optional[str] = None):
      - **password**: WSIZ student account password (required)
      - **lang**: Language [pl] (optional)
     """
-    scraper = Scraper(login, password, lang)
+    scraper = Scraper(login, password, lang=lang)
     s = scraper.start_session()
     validate_user(s)
     return scraper.get_fees(s)
+
+
+@app.get("/study")
+def read_study(login: str, password: str, lang: Optional[str] = None):
+    """
+    Get student course of study:
+     - **login**: WSIZ student ID (required)
+     - **password**: WSIZ student account password (required)
+     - **lang**: Language [pl] (optional)
+    """
+    scraper = Scraper(login, password, lang=lang)
+    s = scraper.start_session()
+    validate_user(s)
+    return scraper.get_study(s)

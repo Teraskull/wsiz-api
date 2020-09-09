@@ -16,6 +16,7 @@ class Scraper():
         self.data_route = 'PersonalData/'
         self.grade_route = 'Grades/'
         self.fees_route = 'Charges/'
+        self.study_route = 'CurrentStudy/'
         if self.lang is not None and self.lang.lower() == 'pl':
             self.lang = 'pl-PL'
         else:
@@ -114,3 +115,20 @@ class Scraper():
                     fee[header_items[idx]] = item.text.strip()
             fees["Charges"].append(fee)
         return fees
+
+    def get_study(self, s: object) -> dict:
+        get_study_page = s.get(self.url + self.study_route)
+        study_page = BeautifulSoup(get_study_page.text, 'html.parser')
+
+        header_items = []
+        for table_header in study_page.find_all('td', class_="dxvgHeader_Office365wsiz"):
+            column_name = table_header.find_all('tr')
+            for item in column_name:
+                header_items.append(item.text.strip())
+
+        study = {}
+        for table_row in study_page.find_all('table', class_="dxvgTable_Office365wsiz"):
+            subject = table_row.find_all('td', class_="dxvgRecord_Office365wsiz")
+            for idx, item in enumerate(subject):
+                study[header_items[idx]] = item.text.strip()
+        return study
