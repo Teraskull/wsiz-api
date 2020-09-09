@@ -40,7 +40,7 @@ class Scraper():
 
         headers = {'Accept-Language': f'{self.lang},en;q=0.8'}
         get_token = s.get(self.url + self.login_route, headers=headers)
-        token = BeautifulSoup(get_token.text, 'html.parser').find('input', {'name': '__RequestVerificationToken'})['value']
+        token = BeautifulSoup(get_token.text, 'lxml').find('input', {'name': '__RequestVerificationToken'})['value']
 
         payload = {
             'UserLogin': self.login,
@@ -49,14 +49,14 @@ class Scraper():
         }
 
         attempt_login = s.post(self.url + self.login_route, data=payload)
-        login_error = BeautifulSoup(attempt_login.text, 'html.parser').find('span', class_="field-validation-error")
+        login_error = BeautifulSoup(attempt_login.text, 'lxml').find('span', class_="field-validation-error")
         if login_error:
             return 401
         return s
 
     def get_grades(self, s: object) -> dict:
         get_grade_page = s.get(self.url + self.grade_route)
-        grade_page = BeautifulSoup(get_grade_page.text, 'html.parser')
+        grade_page = BeautifulSoup(get_grade_page.text, 'lxml')
         try:
             semester_num = grade_page.find('span', class_="dxeBase_Office365wsiz").text[-1]
             int(semester_num)
@@ -84,7 +84,7 @@ class Scraper():
 
     def get_data(self, s: object) -> dict:
         get_data_page = s.get(self.url + self.data_route)
-        data_page = BeautifulSoup(get_data_page.text, 'html.parser')
+        data_page = BeautifulSoup(get_data_page.text, 'lxml')
 
         header_items = []
         for table_header in data_page.find_all('td', class_="dxvgHeader_Office365wsiz"):
@@ -102,7 +102,7 @@ class Scraper():
 
     def get_fees(self, s: object) -> dict:
         get_fees_page = s.get(self.url + self.fees_route)
-        fees_page = BeautifulSoup(get_fees_page.text, 'html.parser')
+        fees_page = BeautifulSoup(get_fees_page.text, 'lxml')
 
         header_items = []
         for table_header in fees_page.find_all('td', class_="dxgvHeader_Office365wsiz"):
@@ -124,7 +124,7 @@ class Scraper():
 
     def get_study(self, s: object) -> dict:
         get_study_page = s.get(self.url + self.study_route)
-        study_page = BeautifulSoup(get_study_page.text, 'html.parser')
+        study_page = BeautifulSoup(get_study_page.text, 'lxml')
 
         header_items = []
         for table_header in study_page.find_all('td', class_="dxvgHeader_Office365wsiz"):
