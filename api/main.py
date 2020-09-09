@@ -5,7 +5,6 @@ from wsiz import Scraper
 
 
 app = FastAPI()
-default_lang = 'en'
 
 
 def validate_user(s: Union[int, object]) -> None:
@@ -22,13 +21,13 @@ def read_root():
 
 
 @app.get("/grades")
-def read_grades(login: str, password: str, semester: Optional[str] = Query('0', deprecated=True), lang: Optional[str] = default_lang):
+def read_grades(login: str, password: str, semester: Optional[str] = Query(None, deprecated=True), lang: Optional[str] = None):
     """
     Get student grades:
      - **login**: WSIZ student ID (required)
      - **password**: WSIZ student account password (required)
      - **semester**: University semester (optional) [DEPRECATED: Grades from previous semesters are currently not available on the Virtual University.]
-     - **lang**: Language [en, pl] (optional)
+     - **lang**: Language [pl] (optional)
     """
     scraper = Scraper(login, password, semester, lang)
     s = scraper.start_session()
@@ -37,12 +36,12 @@ def read_grades(login: str, password: str, semester: Optional[str] = Query('0', 
 
 
 @app.get("/data")
-def read_data(login: str, password: str, lang: Optional[str] = default_lang):
+def read_data(login: str, password: str, lang: Optional[str] = None):
     """
     Get student personal data:
      - **login**: WSIZ student ID (required)
      - **password**: WSIZ student account password (required)
-     - **lang**: Language [en, pl] (optional)
+     - **lang**: Language [pl] (optional)
     """
     scraper = Scraper(login, password, lang)
     s = scraper.start_session()
@@ -51,12 +50,12 @@ def read_data(login: str, password: str, lang: Optional[str] = default_lang):
 
 
 @app.get("/fees")
-def read_fees(login: str, password: str, lang: Optional[str] = default_lang):
+def read_fees(login: str, password: str, lang: Optional[str] = None):
     """
     Get student fees:
      - **login**: WSIZ student ID (required)
      - **password**: WSIZ student account password (required)
-     - **lang**: Language [en, pl] (optional)
+     - **lang**: Language [pl] (optional)
     """
     scraper = Scraper(login, password, lang)
     s = scraper.start_session()

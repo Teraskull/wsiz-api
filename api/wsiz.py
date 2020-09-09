@@ -6,7 +6,7 @@ class Scraper():
     '''
     Scrape student information from the WSIZ Virtual University website
     '''
-    def __init__(self, login: str, password: str, semester: str = '0', lang: str = 'en'):
+    def __init__(self, login: str, password: str, semester: str = None, lang: str = None):
         self.login = login
         self.password = password
         self.semester = semester
@@ -16,7 +16,11 @@ class Scraper():
         self.data_route = 'PersonalData/'
         self.grade_route = 'Grades/'
         self.fees_route = 'Charges/'
-        if self.semester != '0':
+        if self.lang is not None and self.lang.lower() == 'pl':
+            self.lang = 'pl-PL'
+        else:
+            self.lang = 'en-US'
+        if self.semester is not None:
             try:
                 if not int(self.semester).bit_length() < 32:  # If Integer Overflow on website, set to latest semester
                     self.semester = '0'
@@ -26,12 +30,8 @@ class Scraper():
 
     def start_session(self) -> object:
         s = requests.Session()
-        if self.lang.lower() == 'pl':
-            self.lang = 'pl-PL'
-        else:
-            self.lang = 'en-US'
-        headers = {'Accept-Language': f'{self.lang},en;q=0.8'}
 
+        headers = {'Accept-Language': f'{self.lang},en;q=0.8'}
         get_token = s.get(self.url + self.login_route, headers=headers)
         token = BeautifulSoup(get_token.text, 'html.parser').find('input', {'name': '__RequestVerificationToken'})['value']
 
