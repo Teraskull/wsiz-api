@@ -1,10 +1,14 @@
 from fastapi import FastAPI, HTTPException, Query
-from fastapi.responses import RedirectResponse
 from typing import Optional, Union
 from wsiz import Scraper
 
 
-app = FastAPI()
+app = FastAPI(title='WSIZ API',
+              description='API for the WSIZ Virtual University website.',
+              version="1.1.0",
+              docs_url="/",
+              openapi_url="/api/v1/openapi.json"
+              )
 
 
 def validate_user(s: Union[int, object]) -> None:
@@ -12,15 +16,21 @@ def validate_user(s: Union[int, object]) -> None:
         raise HTTPException(status_code=401, detail="401 Unauthorized")
 
 
-@app.get("/")
-def read_root():
+@app.get("/", tags=["Documentation"])
+def read_docs():
     """
-    Root path, redirects to this documentation
+    Interactive API documentation provided by Swagger UI
     """
-    return RedirectResponse("/docs/")
 
 
-@app.get("/grades")
+@app.get("/redoc", tags=["Documentation"])
+def read_redoc():
+    """
+    ReDoc API Reference Documentation
+    """
+
+
+@app.get("/grades", tags=["Endpoints"])
 def read_grades(login: str, password: str, semester: Optional[str] = Query(None, deprecated=True), lang: Optional[str] = None):
     """
     Get student grades:
@@ -35,7 +45,7 @@ def read_grades(login: str, password: str, semester: Optional[str] = Query(None,
     return scraper.get_grades(s)
 
 
-@app.get("/data")
+@app.get("/data", tags=["Endpoints"])
 def read_data(login: str, password: str, lang: Optional[str] = None):
     """
     Get student personal data:
@@ -49,7 +59,7 @@ def read_data(login: str, password: str, lang: Optional[str] = None):
     return scraper.get_data(s)
 
 
-@app.get("/fees")
+@app.get("/fees", tags=["Endpoints"])
 def read_fees(login: str, password: str, lang: Optional[str] = None):
     """
     Get student fees:
@@ -63,7 +73,7 @@ def read_fees(login: str, password: str, lang: Optional[str] = None):
     return scraper.get_fees(s)
 
 
-@app.get("/study")
+@app.get("/study", tags=["Endpoints"])
 def read_study(login: str, password: str, lang: Optional[str] = None):
     """
     Get student course of study:
