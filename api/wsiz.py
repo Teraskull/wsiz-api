@@ -6,56 +6,59 @@ class Scraper():
     '''
     Scrape student information from the WSIZ Virtual University website
     '''
-    def __init__(self, login: str, password: str, semester: str = None, lang: str = None):
-        self.login = login
-        self.password = password
-        self.semester = semester
-        self.lang = lang
+    def __init__(self):
+        self.s = requests.Session()
         self.url = 'https://wu-beta.wsiz.pl/'
         self.login_route = 'Account/Login/'
         self.data_route = 'PersonalData/'
         self.grade_route = 'Grades/'
         self.fees_route = 'Charges/'
         self.study_route = 'CurrentStudy/'
-        if self.lang is not None and self.lang.lower() == 'pl':
-            self.lang = 'pl-PL'
+
+    def start_session(self, login: str, password: str, lang: str = None) -> tuple:
+        s = self.s
+        s.cookies.clear()
+        if lang is not None and lang.lower() == 'pl':
+            lang = 'pl-PL'
             self.word_semester = 'Semestr'
             self.word_grades = 'Oceny'
             self.word_charges = 'Opłaty'
         else:
-            self.lang = 'en-US'
+            lang = 'en-US'
             self.word_semester = 'Semester'
             self.word_grades = 'Grades'
             self.word_charges = 'Charges'
-        if self.semester is not None:
-            try:
-                if not int(self.semester).bit_length() < 32:  # If Integer Overflow on website, set to latest semester
-                    self.semester = '0'
-            except ValueError:  # If not a digit, set to latest semester
-                self.semester = '0'
-            self.grade_route = f"Grades/GetData?semester={self.semester}"
 
-    def start_session(self) -> object:
-        s = requests.Session()
-
-        headers = {'Accept-Language': f'{self.lang},en;q=0.8'}
+        headers = {'Accept-Language': f'{lang},en;q=0.8'}
         get_token = s.get(self.url + self.login_route, headers=headers)
         token = BeautifulSoup(get_token.text, 'lxml').find('input', {'name': '__RequestVerificationToken'})['value']
 
         payload = {
-            'UserLogin': self.login,
-            'Password': self.password,
+            'UserLogin': login,
+            'Password': password,
             '__RequestVerificationToken': token
         }
 
         attempt_login = s.post(self.url + self.login_route, data=payload)
         login_error = BeautifulSoup(attempt_login.text, 'lxml').find('span', class_="field-validation-error")
         if login_error:
-            return 401
-        return s
+            return 401, login, lang
+        return s, login, lang
 
-    def get_grades(self, s: object) -> dict:
-        get_grade_page = s.get(self.url + self.grade_route)
+    def get_user(self, login: str, lang: str) -> dict:
+        return {"User": login, "Language": lang}
+
+    def get_grades(self, semester: str = None) -> dict:
+        s = self.s
+        grade_route = self.grade_route
+        if semester is not None:
+            try:
+                if not int(semester).bit_length() < 32:  # If Integer Overflow on website, set to latest semester
+                    semester = '0'
+            except ValueError:  # If not a digit, set to latest semester
+                semester = '0'
+            grade_route = f"Grades/GetData?semester={semester}"
+        get_grade_page = s.get(self.url + grade_route)
         grade_page = BeautifulSoup(get_grade_page.text, 'lxml')
         try:
             semester_num = grade_page.find('span', class_="dxeBase_Office365wsiz").text[-1]
@@ -82,7 +85,8 @@ class Scraper():
             grades[self.word_grades].append(grade)
         return grades
 
-    def get_data(self, s: object) -> dict:
+    def get_data(self) -> dict:
+        s = self.s
         get_data_page = s.get(self.url + self.data_route)
         data_page = BeautifulSoup(get_data_page.text, 'lxml')
 
@@ -100,7 +104,8 @@ class Scraper():
                     data[header_items[idx]] = item.text.strip()
         return data
 
-    def get_fees(self, s: object) -> dict:
+    def get_fees(self) -> dict:
+        s = self.s
         get_fees_page = s.get(self.url + self.fees_route)
         fees_page = BeautifulSoup(get_fees_page.text, 'lxml')
 
@@ -122,7 +127,8 @@ class Scraper():
             fees[self.word_charges].append(fee)
         return fees
 
-    def get_study(self, s: object) -> dict:
+    def get_study(self) -> dict:
+        s = self.s
         get_study_page = s.get(self.url + self.study_route)
         study_page = BeautifulSoup(get_study_page.text, 'lxml')
 

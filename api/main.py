@@ -16,6 +16,9 @@ def validate_user(s: Union[int, object]) -> None:
         raise HTTPException(status_code=401, detail="401 Unauthorized")
 
 
+scraper = Scraper()
+
+
 @app.get("/", tags=["Documentation"])
 def read_docs():
     """
@@ -30,58 +33,47 @@ def read_redoc():
     """
 
 
-@app.get("/grades", tags=["Endpoints"])
-def read_grades(login: str, password: str, semester: Optional[str] = Query(None, deprecated=True), lang: Optional[str] = None):
+@app.get("/user", tags=["Endpoints"])
+def read_user(login: str, password: str, lang: Optional[str] = None):
     """
-    Get student grades:
+    Log into student account:
      - **login**: WSIZ student ID (required)
      - **password**: WSIZ student account password (required)
-     - **semester**: University semester (optional) [DEPRECATED: Grades from previous semesters are currently not available on the Virtual University.]
      - **lang**: Language [pl] (optional)
     """
-    scraper = Scraper(login, password, semester, lang)
-    s = scraper.start_session()
+    s, login, lang = scraper.start_session(login, password, lang)
     validate_user(s)
-    return scraper.get_grades(s)
+    return scraper.get_user(login, lang)
+
+
+@app.get("/grades", tags=["Endpoints"])
+def read_grades(semester: Optional[str] = Query(None, deprecated=True)):
+    """
+    Get student grades:
+     - **semester**: University semester (optional) [DEPRECATED: Grades from previous semesters are currently not available on the Virtual University.]
+    """
+    return scraper.get_grades(semester)
 
 
 @app.get("/data", tags=["Endpoints"])
-def read_data(login: str, password: str, lang: Optional[str] = None):
+def read_data():
     """
-    Get student personal data:
-     - **login**: WSIZ student ID (required)
-     - **password**: WSIZ student account password (required)
-     - **lang**: Language [pl] (optional)
+    Get student personal data
     """
-    scraper = Scraper(login, password, lang=lang)
-    s = scraper.start_session()
-    validate_user(s)
-    return scraper.get_data(s)
+    return scraper.get_data()
 
 
 @app.get("/fees", tags=["Endpoints"])
-def read_fees(login: str, password: str, lang: Optional[str] = None):
+def read_fees():
     """
-    Get student fees:
-     - **login**: WSIZ student ID (required)
-     - **password**: WSIZ student account password (required)
-     - **lang**: Language [pl] (optional)
+    Get student fees
     """
-    scraper = Scraper(login, password, lang=lang)
-    s = scraper.start_session()
-    validate_user(s)
-    return scraper.get_fees(s)
+    return scraper.get_fees()
 
 
 @app.get("/study", tags=["Endpoints"])
-def read_study(login: str, password: str, lang: Optional[str] = None):
+def read_study():
     """
-    Get student course of study:
-     - **login**: WSIZ student ID (required)
-     - **password**: WSIZ student account password (required)
-     - **lang**: Language [pl] (optional)
+    Get student course of study
     """
-    scraper = Scraper(login, password, lang=lang)
-    s = scraper.start_session()
-    validate_user(s)
-    return scraper.get_study(s)
+    return scraper.get_study()
