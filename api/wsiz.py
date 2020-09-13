@@ -63,7 +63,7 @@ class Scraper():
         try:
             semester_num = grade_page.find('span', class_="dxeBase_Office365wsiz").text[-1]
             int(semester_num)
-        except ValueError:
+        except (ValueError, AttributeError):
             semester_num = ''
 
         header_items = []
