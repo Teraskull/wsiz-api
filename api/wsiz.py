@@ -6,7 +6,7 @@ class Scraper():
     '''
     Scrape student information from the WSIZ Virtual University website
     '''
-    def __init__(self, login: str, password: str, semester: str = '0', lang: str = None):
+    def __init__(self, login: str, password: str, semester: str = None, lang: str = None):
         self.login = login
         self.password = password
         self.semester = semester
@@ -27,12 +27,14 @@ class Scraper():
             self.word_semester = 'Semester'
             self.word_grades = 'Grades'
             self.word_charges = 'Charges'
-        if self.semester != '0':
+        if self.semester is not None:
             try:
                 if not int(self.semester).bit_length() < 32:  # If Integer Overflow on website, set to latest semester
                     self.semester = '0'
             except ValueError:  # If not a digit, set to latest semester
                 self.semester = '0'
+        else:
+            self.semester = '0'
 
     def start_session(self) -> object:
         s = requests.Session()

@@ -31,7 +31,7 @@ def read_redoc():
 
 
 @app.get("/grades", tags=["Endpoints"])
-def read_grades(login: str, password: str, semester: Optional[str] = '0', lang: Optional[str] = None):
+def read_grades(login: str, password: str, semester: Optional[str] = None, lang: Optional[str] = None):
     """
     Get student grades:
      - **login**: WSIZ student ID (required)
