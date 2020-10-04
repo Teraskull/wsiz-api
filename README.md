@@ -6,7 +6,7 @@
 </h1>
 
 <p align="center">
-  API for the WSIZ Virtual University <a href="https://wu-beta.wsiz.pl/">website</a>.
+  API for the WSIZ Virtual University <a href="https://wu.wsiz.edu.pl/">website</a>.
 </p>
 
 <p align="center">
