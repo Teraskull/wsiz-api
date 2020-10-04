@@ -6,12 +6,12 @@ class Scraper():
     '''
     Scrape student information from the WSIZ Virtual University website
     '''
-    def __init__(self, login: str, password: str, semester: str = None, lang: str = None):
+    def __init__(self, login: str, password: str, semester: str = '0', lang: str = None):
         self.login = login
         self.password = password
         self.semester = semester
         self.lang = lang
-        self.url = 'https://wu-beta.wsiz.pl/'
+        self.url = 'https://wu.wsiz.edu.pl/'
         self.login_route = 'Account/Login/'
         self.data_route = 'PersonalData/'
         self.grade_route = 'Grades/'
@@ -27,13 +27,12 @@ class Scraper():
             self.word_semester = 'Semester'
             self.word_grades = 'Grades'
             self.word_charges = 'Charges'
-        if self.semester is not None:
+        if self.semester != '0':
             try:
                 if not int(self.semester).bit_length() < 32:  # If Integer Overflow on website, set to latest semester
                     self.semester = '0'
             except ValueError:  # If not a digit, set to latest semester
                 self.semester = '0'
-            self.grade_route = f"Grades/GetData?semester={self.semester}"
 
     def start_session(self) -> object:
         s = requests.Session()
@@ -55,7 +54,11 @@ class Scraper():
         return s
 
     def get_grades(self, s: object) -> dict:
-        get_grade_page = s.get(self.url + self.grade_route)
+        headers = {'Cookie': f'ASP.NET_SessionId={s.cookies["ASP.NET_SessionId"]}'}
+        s.get(self.url + self.grade_route, headers=headers)  # Set session cookie
+
+        query = {'semester': self.semester}
+        get_grade_page = s.get(self.url + self.grade_route + "GetData/", params=query)
         grade_page = BeautifulSoup(get_grade_page.text, 'lxml')
         try:
             semester_num = grade_page.find('span', class_="dxeBase_Office365wsiz").text[-1]
@@ -118,7 +121,7 @@ class Scraper():
             fee = {}
             for idx, item in enumerate(charge):
                 if idx != 4:  # Skip row with comments
-                    fee[header_items[idx]] = item.text.strip()
+                    fee[header_items[idx].replace('*', '')] = item.text.strip()
             fees[self.word_charges].append(fee)
         return fees
 

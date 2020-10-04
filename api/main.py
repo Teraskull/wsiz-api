@@ -5,7 +5,7 @@ from wsiz import Scraper
 
 app = FastAPI(title='WSIZ API',
               description='API for the WSIZ Virtual University website.',
-              version="1.1.0",
+              version="1.2.0",
               docs_url="/",
               openapi_url="/api/v1/openapi.json"
               )
@@ -31,7 +31,7 @@ def read_redoc():
 
 
 @app.get("/grades", tags=["Endpoints"])
-def read_grades(login: str, password: str, semester: Optional[str] = Query(None, deprecated=True), lang: Optional[str] = None):
+def read_grades(login: str, password: str, semester: Optional[str] = '0', lang: Optional[str] = None):
     """
     Get student grades:
      - **login**: WSIZ student ID (required)
