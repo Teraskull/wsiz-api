@@ -10,13 +10,15 @@
 </p>
 
 <p align="center">
-  <a style="text-decoration:none" href="https://pydebloatx.com:1327">
-    <img src="https://img.shields.io/website?label=API&style=flat-square&up_color=00B16A&url=https%3A%2F%2Fpydebloatx.com%3A1327" alt="WSIZ API" />
-  </a>
   <a style="text-decoration:none" href="https://www.codefactor.io/repository/github/teraskull/wsiz-api">
     <img src="https://www.codefactor.io/repository/github/teraskull/wsiz-api/badge?style=flat-square" alt="CodeFactor" />
   </a>
 </p>
+
+## Notice:
+
+As I graduated WSIZ University now, unfortunately, I won't be able to maintain this project, as I do not have access to the Virtual University anymore.
+Feel free to fork this repository to continue maintaining it.
 
 ## Requirements:
 
